@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	vim \
 	build-essential \
 	python3 \
-	python3-pip
+	python3-pip \
+	python3-venv
 
 # install kubectl
 RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -30,16 +31,18 @@ RUN ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
 # install code-server extensions
 COPY ./setup/10-codeserver.sh /setup/10-codeserver.sh
-RUN chmod +x /setup/10-codeserver.sh
-RUN ./setup/10-codeserver.sh
+RUN sh -x ./setup/10-codeserver.sh
+
+# alias
+COPY ./setup/20-alias.sh /setup/20-alias.sh
+RUN sh -x ./setup/20-alias.sh
 
 # install awscli
 RUN pip install awscli
 
 # install rust
 COPY ./setup/30-rust.sh /setup/30-rust.sh
-RUN chmod +x /setup/30-rust.sh
-RUN ./setup/30-rust.sh
+RUN sh -x ./setup/30-rust.sh
 
 # copy code-server settings.json
 COPY ./config/settings.json /root/.local/share/code-server/User/settings.json
