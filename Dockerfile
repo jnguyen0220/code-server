@@ -44,6 +44,10 @@ RUN pip install awscli
 COPY ./setup/30-rust.sh /setup/30-rust.sh
 RUN sh -x ./setup/30-rust.sh
 
+# install docker
+COPY ./setup/40-docker.sh /setup/40-docker.sh
+RUN sh -x ./setup/40-docker.sh
+
 # copy code-server settings.json
 COPY ./config/settings.json /root/.local/share/code-server/User/settings.json
 
