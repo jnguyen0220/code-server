@@ -1,7 +1,6 @@
 FROM codercom/code-server:4.0.1 as cs
 FROM node:lts-bullseye-slim
 
-ENV PASSWORD Thinh0220
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	apt-transport-https \ 
@@ -13,6 +12,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	python3 \
 	python3-pip \
 	python3-venv
+
+# copy bash configure
+COPY ./config/.bashrc /etc/bash.bashrc
 
 # install kubectl
 RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -48,10 +50,11 @@ RUN sh -x ./setup/30-rust.sh
 COPY ./setup/40-docker.sh /setup/40-docker.sh
 RUN sh -x ./setup/40-docker.sh
 
+# install golang
+COPY ./setup/50-golang.sh /setup/50-golang.sh
+RUN sh -x ./setup/50-golang.sh
+
 # copy code-server settings.json
 COPY ./config/settings.json /root/.local/share/code-server/User/settings.json
-
-# copy bash configure
-COPY ./config/.bashrc /etc/bash.bashrc
 
 CMD ["code-server", "--bind-addr", "0.0.0.0:8080"]
