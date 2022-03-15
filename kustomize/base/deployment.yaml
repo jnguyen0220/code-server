@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-server-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-server
+  template:
+    metadata:
+      labels:
+        app: code-server
+    spec:
+      containers:
+      - name: code-server
+        image: localhost:32000/code-server
+        envFrom:
+        - secretRef:
+            name: code-server-token       
+        env:
+        - name: DOCKER_HOST
+          value: "tcp://localhost:2375"
+        volumeMounts:
+        - name: data-pvc
+          mountPath: /root/wd
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
+      - name: dind-daemon
+        image: docker:stable-dind
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        resources:
+          requests:
+            cpu: 20m
+            memory: 512Mi
+        securityContext:
+            privileged: true
+        volumeMounts:
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
+      volumes:
+      - name: data-pvc
+        persistentVolumeClaim:
+          claimName: data-pvc
+      - name: docker-graph-storage
+        emptyDir: {}

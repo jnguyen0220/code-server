@@ -1,0 +1,112 @@
+apiVersion: v1
+data:
+  PASSWORD: c3RldmVudGVjaDAy
+kind: Secret
+metadata:
+  name: jonny-code-server-token
+  namespace: jonny
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jonny-code-server-svc
+  namespace: jonny
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  selector:
+    app: code-server
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jonny-pvc
+  namespace: jonny
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jonny-code-server-deploy
+  namespace: jonny
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: code-server
+  template:
+    metadata:
+      labels:
+        app: code-server
+    spec:
+      containers:
+      - env:
+        - name: DOCKER_HOST
+          value: tcp://localhost:2375
+        envFrom:
+        - secretRef:
+            name: jonny-code-server-token
+        image: localhost:32000/code-server
+        name: code-server
+        volumeMounts:
+        - mountPath: /wd
+          name: data-pvc
+        - mountPath: /var/lib/docker
+          name: docker-graph-storage
+      - env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        image: docker:stable-dind
+        name: dind-daemon
+        resources:
+          requests:
+            cpu: 20m
+            memory: 512Mi
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/docker
+          name: docker-graph-storage
+      volumes:
+      - name: data-pvc
+        persistentVolumeClaim:
+          claimName: jonny-pvc
+      - emptyDir: {}
+        name: docker-graph-storage
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jonny-code-server-tls
+  namespace: jonny
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - kind: Rule
+    match: Host(`smallware.tplinkdns.com`) && PathPrefix(`/jonny`)
+    middlewares:
+    - name: jonny-stripprefix
+    services:
+    - name: jonny-code-server-svc
+      port: 80
+  tls:
+    certResolver: letsencrypt
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: jonny-stripprefix
+  namespace: jonny
+spec:
+  stripPrefix:
+    prefixes:
+    - /jonny

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dind
+  namespace: dind
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dind
+  template:
+    metadata:
+      labels:
+        app: dind
+    spec:
+      containers:
+      - name: dind-daemon
+        image: docker:stable-dind
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        resources:
+          requests:
+            cpu: 20m
+            memory: 512Mi
+        securityContext:
+            privileged: true
+        volumeMounts:
+        - name: dind-pvc
+          mountPath: /var/lib/docker
+      volumes:
+      - name: dind-pvc
+        persistentVolumeClaim:
+          claimName: dind-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dind-service
+  namespace: dind
+spec:
+  ports:
+  - name: tcp
+    targetPort: 2375
+    port: 2375
+  selector:
+    app: dind

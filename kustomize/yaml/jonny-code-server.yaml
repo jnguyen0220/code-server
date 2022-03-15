@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jonny-code-server
+  namespace: jonny
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jonny-code-server
+  template:
+    metadata:
+      labels:
+        app: jonny-code-server
+    spec:
+      containers:
+      - name: jonny-code-server
+        image: localhost:32000/code-server
+        envFrom:
+        - secretRef:
+            name: jonny-code-server-token       
+        env:
+        - name: DOCKER_HOST
+          value: "tcp://dind-service.dind.svc.cluster.local:2375"
+        volumeMounts:
+        - name: jonny-data
+          mountPath: /wd
+        - name: dind-pvc
+          mountPath: /var/lib/docker
+      volumes:
+      - name: jonny-data
+        persistentVolumeClaim:
+          claimName: jonny-data
+      - name: dind-pvc
+        persistentVolumeClaim:
+          claimName: dind-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jonny-code-server
+spec:
+  ports:
+  - name: http
+    targetPort: 8080
+    port: 80
+  selector:
+    app: jonny-code-server

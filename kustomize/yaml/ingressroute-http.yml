@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: code-server
+  namespace: code-server
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`smallware.tplinkdns.com`) && PathPrefix(`/`)
+    kind: Rule
+    middlewares:
+      - name: redirect-to-https
+        namespace: default
+    services:
+    - name: code-server
+      port: 80

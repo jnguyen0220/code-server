@@ -1,0 +1,12 @@
+additionalArguments:
+  - --certificatesresolvers.letsencrypt.acme.tlschallenge=true
+  - --certificatesresolvers.letsencrypt.acme.email=jonny_nguyen@outlook.com
+  - --certificatesresolvers.letsencrypt.acme.storage=/data/letsencrypt.json
+  - --certificatesresolvers.letsencrypt.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+persistence:
+  enabled: true
+  name: data
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  path: /data
+  annotations: {}

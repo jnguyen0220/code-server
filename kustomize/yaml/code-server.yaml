@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: steven-code-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: steven-code-server
+  template:
+    metadata:
+      labels:
+        app: steven-code-server
+    spec:
+      containers:
+      - name: steven-code-server
+        image: localhost:32000/code-server
+        envFrom:
+        - secretRef:
+            name: steven-code-server-token       
+        env:
+        - name: DOCKER_HOST
+          value: "tcp://localhost:2375"
+        volumeMounts:
+        - name: steven-data
+          mountPath: /wd
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
+      - name: dind-daemon
+        image: docker:stable-dind
+        env:
+        - name: DOCKER_TLS_CERTDIR
+          value: ""
+        resources:
+          requests:
+            cpu: 20m
+            memory: 512Mi
+        securityContext:
+            privileged: true
+        volumeMounts:
+        - name: docker-graph-storage
+          mountPath: /var/lib/docker
+      volumes:
+      - name: steven-data
+        persistentVolumeClaim:
+          claimName: steven-data
+      - name: docker-graph-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: steven-code-server
+spec:
+  ports:
+  - name: http
+    targetPort: 8080
+    port: 80
+  selector:
+    app: steven-code-server
