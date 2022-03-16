@@ -6,7 +6,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-  - match: Host(`smallware.tplinkdns.com`) && PathPrefix(`/chris`)
+  - match: Host(`smallware.tplinkdns.com`) && PathPrefix(`/corey`)
     kind: Rule
     middlewares:
     - name: strip-prefix

@@ -23,7 +23,7 @@ spec:
           value: "tcp://localhost:2375"
         volumeMounts:
         - name: data-pvc
-          mountPath: /root/wd
+          mountPath: /root/pv
         - name: docker-graph-storage
           mountPath: /var/lib/docker
       - name: dind-daemon
