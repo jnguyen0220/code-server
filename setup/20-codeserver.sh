@@ -1,3 +1,4 @@
+#!/bin/bash
 code-server --install-extension ms-python.python
 code-server --install-extension ms-dotnettools.csharp
 code-server --install-extension golang.go
