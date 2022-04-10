@@ -1,10 +1,17 @@
-FROM codercom/code-server:4.1.0 as cs
-FROM node:lts-bullseye-slim
+FROM codercom/code-server:4.2.0 as cs
+FROM debian:bullseye-slim
 
+# Set environment
 ENV DEBIAN_FRONTEND noninteractive
+ENV NODE_VERSION 16.14.2
+ENV YARN_VERSION 1.22.18
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
+	sudo \
+	tini \
 	apt-transport-https \ 
 	ca-certificates \
+	cargo \
 	curl \
 	git \
 	vim \
@@ -14,16 +21,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	python3-pip \
 	python3-venv
 
-# copy bash configure
-COPY ./config/.bashrc /etc/bash.bashrc
-
-# install rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-
-# install docker
-COPY ./setup/10-docker.sh /setup/10-docker.sh
-RUN . ./setup/10-docker.sh
+# install awscli
+RUN pip install awscli
 
 # install kubectl
 RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -41,20 +40,32 @@ COPY --from=cs /usr/lib/code-server /usr/lib/code-server
 RUN ln -s /usr/local/lib/code-server/code-server /usr/local/bin/code-server
 
 # install code-server extensions
-COPY ./setup/20-codeserver.sh /setup/20-codeserver.sh
-RUN . ./setup/20-codeserver.sh
+COPY ./setup/10-copy-codeserver.sh /setup/10-copy-codeserver.sh
+RUN . ./setup/10-copy-codeserver.sh
 
-# install awscli
-RUN pip install awscli
+# install Nodejs and Yarn
+COPY ./setup/20-install-nodejs-yarn.sh /setup/20-install-nodejs-yarn.sh
+RUN . ./setup/20-install-nodejs-yarn.sh
 
-# copy code-server settings.json
-COPY ./config/settings.json /root/.local/share/code-server/User/settings.json
+# install Docker cli
+COPY ./setup/30-install-docker-cli.sh /setup/30-install-docker-cli.sh
+RUN . ./setup/30-install-docker-cli.sh
 
-# alias
-COPY ./setup/30-alias.sh /setup/30-alias.sh
-RUN . ./setup/30-alias.sh
+ENV USER_NAME=beyond
+ENV GROUP_NAME=power
+ENV HOME_DIR=/home/$USER_NAME
 
-# Copy Logo
-COPY ./setup/logo.txt /root/logo.txt
+RUN groupadd -g 1000 $GROUP_NAME && useradd -rm -d $HOME_DIR -s /bin/bash -g $GROUP_NAME -G sudo -u 1000 $USER_NAME
+RUN echo "${USER_NAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-CMD ["code-server", "--bind-addr", "0.0.0.0:8080"]
+COPY /config /config
+RUN chmod +x /config/init.sh
+
+RUN cp /config/.bashrc /root/.bashrc
+
+COPY /startup /startup
+
+ENTRYPOINT ["tini","--","/config/init.sh"]
+
+USER $USER_NAME
+WORKDIR $HOME_DIR

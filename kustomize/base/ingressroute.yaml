@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: code-server-tls
+spec:
+  entryPoints:
+    - websecure
+  routes:
+  - match: Host(`smallware.tplinkdns.com`)
+    kind: Rule
+    middlewares:
+    - name: strip-prefix
+    services:
+    - name: code-server
+      port: 80
+  tls:
+    certResolver: letsencrypt
