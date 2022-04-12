@@ -1,10 +1,10 @@
 FROM codercom/code-server:4.2.0 as cs
-FROM debian:bullseye-slim
+FROM ubuntu:20.04
 
 # Set environment
-ENV DEBIAN_FRONTEND noninteractive
 ENV NODE_VERSION 16.14.2
 ENV YARN_VERSION 1.22.18
+ENV GO_VERSION=1.18
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	sudo \
@@ -17,7 +17,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	vim \
 	build-essential \
 	python3 \
-	golang \
 	python3-pip \
 	python3-venv
 
@@ -50,6 +49,10 @@ RUN . ./setup/20-install-nodejs-yarn.sh
 # install Docker cli
 COPY ./setup/30-install-docker-cli.sh /setup/30-install-docker-cli.sh
 RUN . ./setup/30-install-docker-cli.sh
+
+# install golang
+COPY ./setup/40-install-golang.sh /setup/40-install-golang.sh
+RUN . ./setup/40-install-golang.sh
 
 ENV USER_NAME=beyond
 ENV GROUP_NAME=power
