@@ -1,5 +1,5 @@
 FROM codercom/code-server:4.3.0 as cs
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Set environment
 ENV NODE_VERSION 16.14.2
@@ -9,6 +9,7 @@ ENV GO_VERSION=1.18
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	sudo \
 	tini \
+	openssh-client \
 	apt-transport-https \ 
 	ca-certificates \
 	cargo \
