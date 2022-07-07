@@ -12,37 +12,32 @@ spec:
       labels:
         app: code-server
     spec:
+      securityContext:
+        fsGroup: 1000
       containers:
       - name: code-server
         image: localhost:32000/code-server
+        securityContext:
+          privileged: true
+          runAsGroup: 1000
+          runAsUser: 1000
         envFrom:
         - secretRef:
-            name: code-server-token       
-        env:
-        - name: DOCKER_HOST
-          value: "tcp://localhost:2375"
+            name: code-server-token
         volumeMounts:
         - name: data-pvc
           mountPath: /home/beyond
-        - name: docker-graph-storage
-          mountPath: /var/lib/docker
-      - name: dind-daemon
-        image: docker:stable-dind
-        env:
-        - name: DOCKER_TLS_CERTDIR
-          value: ""
-        resources:
-          requests:
-            cpu: 20m
-            memory: 512Mi
-        securityContext:
-            privileged: true
-        volumeMounts:
-        - name: docker-graph-storage
+        - name: docker-sock
+          mountPath: /var/run/
+        - name: docker-directory
           mountPath: /var/lib/docker
       volumes:
       - name: data-pvc
         persistentVolumeClaim:
           claimName: data-pvc
-      - name: docker-graph-storage
-        emptyDir: {}
+      - name: docker-sock
+        hostPath:
+          path: /var/run/
+      - name: docker-directory
+        hostPath:
+          path: /var/lib/docker
