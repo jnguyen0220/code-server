@@ -1,5 +1,5 @@
 FROM codercom/code-server:4.5.2 as cs
-FROM ubuntu:22.04.1
+FROM ubuntu:22.04
 
 # Set environment
 ENV NODE_VERSION 16.14.2
