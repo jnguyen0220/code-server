@@ -1,4 +1,4 @@
-FROM codercom/code-server:4.5.1 as cs
+FROM codercom/code-server:4.5.2 as cs
 FROM ubuntu:22.04.1
 
 # Set environment
