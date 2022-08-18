@@ -16,7 +16,8 @@ spec:
         fsGroup: 1000
       containers:
       - name: code-server
-        image: localhost:32000/code-server
+        image: ghcr.io/jnguyen0220/code-server:latest
+        imagePullPolicy: Always
         securityContext:
           privileged: true
           runAsGroup: 1000
@@ -31,6 +32,8 @@ spec:
           mountPath: /var/run/
         - name: docker-directory
           mountPath: /var/lib/docker
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
       volumes:
       - name: data-pvc
         persistentVolumeClaim:
