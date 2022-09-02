@@ -16,7 +16,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: code-server
-        image: 192.168.2.4:32000/code-server:latest
+        image: ghcr.io/jnguyen0220/code-server:latest
         imagePullPolicy: Always
         securityContext:
           privileged: true
@@ -40,7 +40,7 @@ spec:
           claimName: data-pvc
       - name: docker-sock
         hostPath:
-          path: /var/run/
+          path: /var/run
       - name: docker-directory
         hostPath:
           path: /var/lib/docker
