@@ -1,4 +1,4 @@
-FROM codercom/code-server:4.7.0 as cs
+FROM codercom/code-server:4.7.1 as cs
 FROM ubuntu:22.04
 
 # Set environment
@@ -16,14 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	curl \
 	git \
 	vim \
-	dotnet6 \
 	build-essential \
 	python3 \
 	python3-pip \
 	python3-venv
 
 # install awscli
-RUN pip install awscli
+RUN pip install awscli --extra-index-url https://piwheels.org/simple
 
 # install kubectl
 RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -45,8 +44,8 @@ COPY ./setup/10-copy-codeserver.sh /setup/10-copy-codeserver.sh
 RUN . ./setup/10-copy-codeserver.sh
 
 # install Nodejs and Yarn
-COPY ./setup/20-install-nodejs-yarn.sh /setup/20-install-nodejs-yarn.sh
-RUN . ./setup/20-install-nodejs-yarn.sh
+# COPY ./setup/20-install-nodejs-yarn.sh /setup/20-install-nodejs-yarn.sh
+# RUN . ./setup/20-install-nodejs-yarn.sh
 
 # install Docker cli
 COPY ./setup/30-install-docker-cli.sh /setup/30-install-docker-cli.sh
