@@ -2,7 +2,6 @@ FROM codercom/code-server:4.7.1 as cs
 FROM ubuntu:22.04
 
 # Set environment
-ENV NODE_VERSION 16.14.2
 ENV YARN_VERSION 1.22.18
 ENV GO_VERSION=1.18
 
@@ -44,8 +43,8 @@ COPY ./setup/10-copy-codeserver.sh /setup/10-copy-codeserver.sh
 RUN . ./setup/10-copy-codeserver.sh
 
 # install Nodejs and Yarn
-# COPY ./setup/20-install-nodejs-yarn.sh /setup/20-install-nodejs-yarn.sh
-# RUN . ./setup/20-install-nodejs-yarn.sh
+COPY ./setup/20-install-nodejs-yarn.sh /setup/20-install-nodejs-yarn.sh
+RUN . ./setup/20-install-nodejs-yarn.sh
 
 # install Docker cli
 COPY ./setup/30-install-docker-cli.sh /setup/30-install-docker-cli.sh
