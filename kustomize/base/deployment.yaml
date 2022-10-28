@@ -16,7 +16,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: code-server
-        image: ghcr.io/jnguyen0220/code-server:latest
+        image: ghcr.io/jnguyen0220/code-server:main
         imagePullPolicy: Always
         securityContext:
           privileged: true
