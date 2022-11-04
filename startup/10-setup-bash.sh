@@ -1,6 +1,4 @@
 #!/bin/bash
-
-if [ ! -f "${HOME_DIR}/.bashrc" ]; then
 sudo cp /root/.bashrc $HOME_DIR/.bashrc
 sudo cp /config/logo.txt $HOME_DIR/logo.txt
 sudo chown -R $USER_NAME:$GROUP_NAME $HOME_DIR/.bashrc $HOME_DIR/logo.txt
@@ -21,4 +19,3 @@ echo "echo -e '\033[1;31m\U2605\033[0m \033[1;33m go\033[0m - $(go version)'" >>
 echo "echo -e '\033[1;31m\U2605\033[0m \033[1;33m rust\033[0m - $(rustc --version)'" >> $HOME_DIR/.bashrc
 echo "echo -e '\033[1;31m\U2605\033[0m \033[1;33m kubectl\033[0m - $(kubectl version)'" >> $HOME_DIR/.bashrc
 echo "echo" >> $HOME_DIR/.bashrc
-fi
