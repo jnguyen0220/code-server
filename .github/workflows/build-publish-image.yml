@@ -22,10 +22,8 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
       - name: Login GitHub Container Registry
+        uses: actions/checkout@v3
         uses: ./.github/workflows/login.yml@main
 
       - name: Extract metadata (tags, labels) for Docker
