@@ -15,13 +15,20 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  login-github-container-registry:
+    uses: ./.github/workflows/login.yml
+
   build-and-push-image:
     runs-on: ubuntu-latest
-    uses: ./.github/workflows/login.yml
+    needs: [login-github-container-registry]
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
