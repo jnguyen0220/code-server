@@ -17,16 +17,10 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
+    uses: ./.github/workflows/login.yml@main
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Login GitHub Container Registry
-        uses: ./.github/workflows/login.yml@main
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
