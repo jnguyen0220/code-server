@@ -1,6 +1,7 @@
 name: Login GitHub Container Registry
 
 on:
+  workflow_dispatch:
   workflow_call:
 
 jobs:
