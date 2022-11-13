@@ -4,6 +4,9 @@ kind: Kustomization
 namespace: guest
 namePrefix: guest-
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 secretGenerator:
   - name: code-server-token
     envs:

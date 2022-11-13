@@ -4,6 +4,9 @@ kind: Kustomization
 namespace: jonny
 namePrefix: jonny-
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 secretGenerator:
   - name: code-server-token
     envs:
