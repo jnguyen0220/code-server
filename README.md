@@ -43,5 +43,9 @@ Docker runtime
 
 ## Demo
 
-password: welcome1\
-[https://smallware.tplinkdns.com/guest/login/](https://smallware.tplinkdns.com/guest/login/)
+[https://smallware.tplinkdns.com/guest/login/](https://smallware.tplinkdns.com/guest/login/)\
+password: welcome1
+
+## Docker Hub
+
+docker pull jnguyen0220/code-server:main
