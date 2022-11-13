@@ -30,12 +30,13 @@ Prebuild docker code server image with code server extension, language runtime a
   Server Version: version.Info{Major:"1", Minor:"25", GitVersion:"v1.25.3", GitCommit:"434bfd82814af038ad94d62ebe59b133fcb50506", GitTreeState:"clean", BuildDate:"2022-11-07T07:39:12Z", GoVersion:"go1.19.3", Compiler:"gc", Platform:"linux/amd64"}
 
 ## Build
-
+```
 docker build -t jnguyen0220/code-server .
-
+```
 ## Run
-
+```
 docker run -p 8080:8080 -e PASSWORD='welcome1' -d jnguyen0220/code-server
+```
 
 ## Requirements
 
@@ -47,5 +48,6 @@ Docker runtime
 password: welcome1
 
 ## Docker Hub
-
+```
 docker pull jnguyen0220/code-server:main
+```
