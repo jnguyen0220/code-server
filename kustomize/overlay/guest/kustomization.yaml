@@ -4,36 +4,40 @@ kind: Kustomization
 namespace: guest
 namePrefix: guest-
 
+secretGenerator:
+  - name: code-server-token
+    envs:
+      - .env
+
 replacements:
-- source:
-    kind: PersistentVolumeClaim
-    fieldPath: metadata.name
-  targets:
-    - select:
-        kind: Deployment
-      fieldPaths:
-        - spec.template.spec.volumes.0.persistentVolumeClaim.claimName
-- source:
-    kind: Service
-    fieldPath: metadata.name
-  targets:
-    - select:
-        kind: IngressRoute
-      fieldPaths:
-        - spec.routes.0.services.0.name
-- source:
-    kind: Middleware
-    fieldPath: metadata.name
-  targets:
-    - select:
-        kind: IngressRoute
-      fieldPaths:
-        - spec.routes.0.middlewares.0.name
+  - source:
+      kind: PersistentVolumeClaim
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: Deployment
+        fieldPaths:
+          - spec.template.spec.volumes.0.persistentVolumeClaim.claimName
+  - source:
+      kind: Service
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: IngressRoute
+        fieldPaths:
+          - spec.routes.0.services.0.name
+  - source:
+      kind: Middleware
+      fieldPath: metadata.name
+    targets:
+      - select:
+          kind: IngressRoute
+        fieldPaths:
+          - spec.routes.0.middlewares.0.name
 
 resources:
-- ingressroute.yaml
-- secret.yaml
-- strip-prefix.yaml
+  - ingressroute.yaml
+  - strip-prefix.yaml
 
 bases:
-- ../../base
+  - ../../base
