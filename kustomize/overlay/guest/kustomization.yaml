@@ -41,6 +41,4 @@ replacements:
 resources:
   - ingressroute.yaml
   - strip-prefix.yaml
-
-bases:
   - ../../base
