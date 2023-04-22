@@ -2,8 +2,8 @@ FROM codercom/code-server:latest as cs
 FROM ubuntu:22.04
 
 # Set environment
-ENV YARN_VERSION 1.22.18
-ENV GO_VERSION=1.18
+ENV YARN_VERSION=3.2.5
+ENV GO_VERSION=1.20.3
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	sudo \
