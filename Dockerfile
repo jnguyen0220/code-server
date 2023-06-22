@@ -8,6 +8,8 @@ ENV GO_VERSION=1.20.3
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	sudo \
 	tini \
+	gpg \
+	apt-transport-https \
 	openssh-client \
 	apt-transport-https \ 
 	ca-certificates \
@@ -24,8 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install awscli --extra-index-url https://piwheels.org/simple
 
 # install kubectl
-RUN curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list
+RUN curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-archive-keyring.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 RUN apt-get update && apt-get install -y kubectl
 
 # install kubens & kubectx
